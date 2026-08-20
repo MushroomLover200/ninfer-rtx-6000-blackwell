@@ -224,8 +224,8 @@ std::vector<std::uint8_t> fetch_url(std::string url, const Policy& policy) {
         if (!curl) { throw std::runtime_error("failed to create libcurl handle"); }
         CurlBuffer buffer{.bytes = {}, .limit = policy.max_bytes};
         curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
-        curl_easy_setopt(curl.get(), CURLOPT_PROTOCOLS_STR, "http,https");
-        curl_easy_setopt(curl.get(), CURLOPT_REDIR_PROTOCOLS_STR, "http,https");
+        curl_easy_setopt(curl.get(), CURLOPT_PROTOCOLS, (long)(CURLPROTO_HTTP | CURLPROTO_HTTPS));
+        curl_easy_setopt(curl.get(), CURLOPT_REDIR_PROTOCOLS, (long)(CURLPROTO_HTTP | CURLPROTO_HTTPS));
         curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 0L);
         curl_easy_setopt(curl.get(), CURLOPT_CONNECTTIMEOUT_MS,
                          bounded_timeout_ms(policy, policy.connect_timeout_ms));

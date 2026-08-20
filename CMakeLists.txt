@@ -6,11 +6,6 @@ cmake_minimum_required(VERSION 3.28)
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
   set(CMAKE_CUDA_ARCHITECTURES 120a CACHE STRING "CUDA architectures to build")
 endif()
-if(NOT CMAKE_CUDA_ARCHITECTURES STREQUAL "120a")
-  message(FATAL_ERROR
-    "NInfer supports only CMAKE_CUDA_ARCHITECTURES=120a; got "
-    "'${CMAKE_CUDA_ARCHITECTURES}'")
-endif()
 
 project(ninfer LANGUAGES C CXX CUDA)
 
@@ -33,13 +28,13 @@ if(CMAKE_GENERATOR MATCHES "Ninja")
   set(CMAKE_JOB_POOL_LINK cuda_link)
 endif()
 
-if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 13.1)
+if(CMAKE_CUDA_COMPILER_VERSION VERSION_LESS 12.8)
   message(FATAL_ERROR
     "NInfer requires CUDA 13.1 or newer; found CUDA compiler "
     "${CMAKE_CUDA_COMPILER_VERSION}")
 endif()
 
-set(NINFER_BUILD_MEDIA_ACQUIRE OFF)
+set(NINFER_BUILD_MEDIA_ACQUIRE ON)
 if(NINFER_BUILD_APPS OR BUILD_TESTING)
   set(NINFER_BUILD_MEDIA_ACQUIRE ON)
 endif()
@@ -57,9 +52,9 @@ endif()
 find_package(CUDAToolkit REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(FFMPEG REQUIRED IMPORTED_TARGET
-  libavformat>=60 libavcodec>=60 libavutil>=58 libswscale>=7)
+  libavformat>=58 libavcodec>=58 libavutil>=56 libswscale>=5)
 if(NINFER_BUILD_MEDIA_ACQUIRE)
-  pkg_check_modules(LIBCURL REQUIRED IMPORTED_TARGET libcurl>=7.85)
+  pkg_check_modules(LIBCURL REQUIRED IMPORTED_TARGET libcurl>=7.81)
 endif()
 find_package(Threads REQUIRED)
 

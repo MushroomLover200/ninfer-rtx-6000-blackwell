@@ -393,12 +393,10 @@ int rotation_of(const AVStream* stream) {
     if (tag != nullptr) {
         rotation = static_cast<int>(std::nearbyint(std::strtod(tag->value, nullptr)));
     }
-    const AVPacketSideData* side =
-        av_packet_side_data_get(stream->codecpar->coded_side_data,
-                                stream->codecpar->nb_coded_side_data, AV_PKT_DATA_DISPLAYMATRIX);
-    if (side != nullptr && side->size >= 9 * sizeof(std::int32_t)) {
+    const uint8_t* side_data = av_stream_get_side_data(stream, AV_PKT_DATA_DISPLAYMATRIX, nullptr);
+    if (side_data != nullptr) {
         rotation = static_cast<int>(std::nearbyint(
-            -av_display_rotation_get(reinterpret_cast<const std::int32_t*>(side->data))));
+            -av_display_rotation_get(reinterpret_cast<const int32_t*>(side_data))));
     }
     rotation %= 360;
     if (rotation < 0) { rotation += 360; }
